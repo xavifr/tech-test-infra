@@ -1,0 +1,54 @@
+---
+
+- hosts: deploy_machines
+  remote_user: root
+  vars:
+   ansible_ssh_private_key_file: "rsa"
+
+  tasks:
+
+    - name: Wait for boot
+      wait_for_connection:
+        connect_timeout: 10
+        sleep: 5
+        timeout: 300
+
+    - name: Wait for SSH
+      ansible.builtin.wait_for:
+        port: 22
+        sleep: 5
+        search_regex: OpenSSH
+        timeout: 300
+
+    - name: Copy files
+      copy:
+        src: dist/{{ item }}
+        dest: /opt/{{ item }}
+      loop:
+        - docker-compose.yml
+        - .env
+
+    - name: Install Prerequisites
+      apt:
+        name:
+          - 'docker.io'
+          - 'docker-compose'
+        state: present
+        update_cache: yes
+
+    - name: RM annoying docker-credential-secretservice
+      file:
+        path: /usr/bin/docker-credential-secretservice
+        state: absent
+
+    - name: Login to docker
+      shell:
+        cmd: echo "{{ lookup('env','GITHUB_TOKEN') }}" | docker login ghcr.io --username xavifr --password-stdin
+#        cmd: echo "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" | docker login ghcr.io --username xavifr --password-stdin
+
+    - name: Start app
+      shell:
+        cmd: "docker-compose up -d"
+        chdir: /opt
+
+  gather_facts: false

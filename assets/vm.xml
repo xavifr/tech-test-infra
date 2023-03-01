@@ -20,7 +20,7 @@
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type='file' device='disk'>
       <driver name='qemu' type='raw'/>
-      <source file='${PATH_TO_VM_DISK_FILE}'/>
+      <source file='/var/lib/libvirt/images/debian10-ssh.img'/>
       <backingStore/>
       <target dev='vda' bus='virtio'/>
       <alias name='virtio-disk0'/>
@@ -39,5 +39,8 @@
       <alias name='video0'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
     </video>
+    <console type='pty'>
+      <target type='serial' port='0'/>
+    </console>
   </devices>
 </domain>
