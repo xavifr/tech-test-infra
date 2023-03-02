@@ -16,4 +16,6 @@ RUN mkdir /go
 COPY --chown=0:0 --from=builder /go/bin/backend /go
 WORKDIR /go/conf
 
+USER nobody
+
 CMD ["/go/backend"]
