@@ -44,7 +44,6 @@
     - name: Login to docker
       shell:
         cmd: echo "{{ lookup('env','GITHUB_TOKEN') }}" | docker login ghcr.io --username xavifr --password-stdin
-#        cmd: echo "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" | docker login ghcr.io --username xavifr --password-stdin
 
     - name: Start app
       shell:
